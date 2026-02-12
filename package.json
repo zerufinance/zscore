@@ -1,0 +1,13 @@
+{
+  "name": "zscore",
+  "version": "1.0.0",
+  "description": "Register and manage agents on the Zeru ERC-8004 Identity Registry",
+  "private": false,
+  "type": "module",
+  "dependencies": {
+    "ethers": "6.13.4",
+    "zod": "3.23.8",
+    "canonicalize": "2.0.0",
+    "tsx": "4.19.2"
+  }
+}
