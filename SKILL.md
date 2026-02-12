@@ -1,13 +1,13 @@
 ---
 name: zscore
-description: Register agents on the Zeru ERC-8004 Identity Registry, manage wallets and metadata, and read on-chain state. Use when an agent needs to register on-chain, check fees, read agent info, set metadata, or manage agent wallets on Base Mainnet or Base Sepolia.
+description: Register agents on the zScore ERC-8004 Identity Registry, manage wallets and metadata, and read on-chain state. Use when an agent needs to register on-chain, check fees, read agent info, set metadata, or manage agent wallets on Base Mainnet or Base Sepolia.
 user-invocable: true
 metadata: {"openclaw":{"requires":{"env":["PRIVATE_KEY"],"bins":["node","npx"]},"primaryEnv":"PRIVATE_KEY"}}
 ---
 
-# Zeru ERC-8004 Identity Registry
+# zScore ERC-8004 Identity Registry
 
-Register and manage AI agents on the Zeru Identity Registry. Defaults to Base Mainnet (0.0025 ETH fee). Use `--chain 84532` for Base Sepolia testnet.
+Register and manage AI agents on the zScore Identity Registry. Defaults to Base Mainnet (0.0025 ETH fee). Use `--chain 84532` for Base Sepolia testnet.
 
 ## One-Time Setup
 
@@ -138,9 +138,9 @@ Once you have all inputs:
 
 ### 4. Run registration
 
-- Ensure `PRIVATE_KEY` is set (env or user provided). If the user gave the key for this run only, set it in the environment for the command: `PRIVATE_KEY=0x... npx tsx ./scripts/zeru.ts register --json agent.json`
+- Ensure `PRIVATE_KEY` is set (env or user provided). If the user gave the key for this run only, set it in the environment for the command: `PRIVATE_KEY=0x... npx tsx ./scripts/zscore.ts register --json agent.json`
 - For Base Sepolia, add: `--chain 84532`
-- Run: `npx tsx ./scripts/zeru.ts register --json agent.json` (and `--chain 84532` if using Base Sepolia)
+- Run: `npx tsx ./scripts/zscore.ts register --json agent.json` (and `--chain 84532` if using Base Sepolia)
 
 Do **not** run the register command until the user has provided at least name, description, and at least one service endpoint, and (if not already in env) the private key, and you have created the JSON file.
 
@@ -158,7 +158,7 @@ Register a new agent using a full JSON file (recommended). Creates hosted agent 
 **Steps to register (when following Agent Instructions above):**
 1. Collect user input for name, description, services, and any optional fields; mention fee and PRIVATE_KEY.
 2. Create a JSON file (e.g. `agent.json`) with that data.
-3. Run: `npx tsx ./scripts/zeru.ts register --json agent.json`
+3. Run: `npx tsx ./scripts/zscore.ts register --json agent.json`
 
 The SDK automatically adds `type`, `registrations` (with `agentId: 0` placeholder), and defaults for missing optional fields. After minting, it updates the document with the real `agentId`.
 
@@ -174,7 +174,7 @@ Simple registration (single API endpoint only). For richer agents, use `--json` 
 
 Requires `PRIVATE_KEY` env var. Wallet must have fee + gas (e.g. ~0.003 ETH on mainnet).
 
-To run: `npx tsx ./scripts/zeru.ts register --name "..." --description "..." --endpoint "..."`
+To run: `npx tsx ./scripts/zscore.ts register --name "..." --description "..." --endpoint "..."`
 
 ### `/zscore read <agentId>`
 
@@ -184,7 +184,7 @@ Read an agent's on-chain data: owner, URI, wallet, name, services.
 /zscore read 16
 ```
 
-To run: `npx tsx ./scripts/zeru.ts read 16`
+To run: `npx tsx ./scripts/zscore.ts read 16`
 
 ### `/zscore fee`
 
@@ -194,7 +194,7 @@ Check current registration fee and whether registration is open.
 /zscore fee
 ```
 
-To run: `npx tsx ./scripts/zeru.ts fee`
+To run: `npx tsx ./scripts/zscore.ts fee`
 
 ### `/zscore set-metadata <agentId> --key <key> --value <value>`
 
@@ -206,7 +206,7 @@ Set custom metadata on an agent. Only the owner can call.
 
 Requires `PRIVATE_KEY`.
 
-To run: `npx tsx ./scripts/zeru.ts set-metadata 16 --key "category" --value "trading"`
+To run: `npx tsx ./scripts/zscore.ts set-metadata 16 --key "category" --value "trading"`
 
 ### `/zscore unset-wallet <agentId>`
 
@@ -218,7 +218,7 @@ Clear the agent wallet. Only the owner can call.
 
 Requires `PRIVATE_KEY`.
 
-To run: `npx tsx ./scripts/zeru.ts unset-wallet 16`
+To run: `npx tsx ./scripts/zscore.ts unset-wallet 16`
 
 ## Setup
 
@@ -263,7 +263,7 @@ Optional env:
 - **Registration Fee:** 0.001 ETH
 - **RPC:** https://sepolia.base.org
 
-- **Source:** `zeru`
+- **Source:** `zscore`
 
 ## How It Works
 

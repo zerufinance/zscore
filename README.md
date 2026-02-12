@@ -1,6 +1,6 @@
 # zscore
 
-Register and manage AI agents on the **Zeru ERC-8004 Identity Registry** (Base Mainnet / Base Sepolia). This skill gives agents the ability to register on-chain, check fees, read agent info, set metadata, and manage agent wallets.
+Register and manage AI agents on the **zScore ERC-8004 Identity Registry** (Base Mainnet / Base Sepolia). This skill gives agents the ability to register on-chain, check fees, read agent info, set metadata, and manage agent wallets.
 
 ## Install with the skills CLI
 

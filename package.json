@@ -1,7 +1,7 @@
 {
   "name": "zscore",
   "version": "1.0.0",
-  "description": "Register and manage agents on the Zeru ERC-8004 Identity Registry",
+  "description": "Register and manage agents on the Zscore ERC-8004 Identity Registry",
   "private": false,
   "type": "module",
   "dependencies": {

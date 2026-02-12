@@ -1,6 +1,6 @@
 #!/usr/bin/env npx tsx
 /**
- * Zeru ERC-8004 Identity Registry — OpenClaw Skill CLI
+ * Zscore ERC-8004 Identity Registry — OpenClaw Skill CLI
  *
  * Commands:
  *   register      --name <name> --description <desc> --endpoint <url> [--image <url>]
@@ -28,7 +28,7 @@ import {
   getAgentWallet,
   setMetadata,
   unsetAgentWallet,
-  ZeruError,
+  ZscoreError,
 } from "../lib/index.js";
 
 // ── Helpers ──
@@ -75,7 +75,7 @@ function getChainLabel(chainId: number): string {
 
 function getSigner() {
   const pk = process.env.PRIVATE_KEY;
-  if (!pk) die("PRIVATE_KEY env var not set. Add it to your OpenClaw config under skills.entries.zeru-erc8004-identity.env");
+  if (!pk) die("PRIVATE_KEY env var not set. Add it to your OpenClaw config under skills.entries.zscore-erc8004-identity.env");
   const config = resolveConfig({
     chainId: getChainId(),
     rpcUrl: process.env.RPC_URL,
@@ -170,7 +170,7 @@ async function cmdRegister(flags: Record<string, string>) {
   // Set owner from signer if not provided
   if (!input!.owner) input!.owner = address;
 
-  console.log("\u26D3\uFE0F  Zeru ERC-8004 Agent Registration");
+  console.log("\u26D3\uFE0F  Zscore ERC-8004 Agent Registration");
   console.log("\u2501".repeat(40));
   console.log(`  Network:  ${getChainLabel(config.chainId)}`);
   console.log(`  Wallet:   ${address}`);
@@ -260,7 +260,7 @@ async function cmdRead(positional: string[]) {
 async function cmdFee() {
   const config = getReadConfig();
 
-  console.log("\u26D3\uFE0F  Zeru Registry Info");
+  console.log("\u26D3\uFE0F  Zscore Registry Info");
   console.log("\u2501".repeat(40));
 
   const fee = await getRegistrationFee(config);
@@ -312,7 +312,7 @@ async function cmdUnsetWallet(positional: string[]) {
 async function main() {
   const args = process.argv.slice(2);
   if (args.length === 0) {
-    console.log("Zeru ERC-8004 Identity Registry");
+    console.log("Zscore ERC-8004 Identity Registry");
     console.log("\u2501".repeat(40));
     console.log("Commands:");
     console.log("  register     --json <file>  (full agent JSON — recommended)");
@@ -355,8 +355,8 @@ async function main() {
         die(`Unknown command: ${command}. Use: register, read, fee, set-metadata, unset-wallet`);
     }
   } catch (e) {
-    if (e instanceof ZeruError) {
-      console.error(`\n\u274C ZeruError [${e.code}]: ${e.message}`);
+    if (e instanceof ZscoreError) {
+      console.error(`\n\u274C ZscoreError [${e.code}]: ${e.message}`);
       if (e.details) console.error("  Details:", JSON.stringify(e.details, null, 2));
     } else if (e instanceof Error) {
       console.error(`\n\u274C Error: ${e.message}`);
