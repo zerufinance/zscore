@@ -27,7 +27,7 @@ cd .cursor/skills/zscore && npm install
 
 ## Commands (from SKILL.md)
 
-- **register** — Register an agent via `--json <file>` or `--name` / `--description` / `--endpoint`
+- **register** — Register an agent via `--json <file>` only (full agent JSON)
 - **read** \<agentId\> — Read on-chain agent data
 - **fee** — Check registration fee and status
 - **set-metadata** \<agentId\> --key \<key\> --value \<value\>

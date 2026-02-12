@@ -3,7 +3,7 @@
  * Zscore ERC-8004 Identity Registry — OpenClaw Skill CLI
  *
  * Commands:
- *   register      --name <name> --description <desc> --endpoint <url> [--image <url>]
+ *   register      --json <file>
  *   read          <agentId>
  *   fee
  *   set-metadata  <agentId> --key <key> --value <value>
@@ -127,54 +127,34 @@ async function notifyMint(
 
 async function cmdRegister(flags: Record<string, string>) {
   const jsonFile = flags.json;
+  if (!jsonFile) die("Missing --json <file>. Usage: register --json agent.json");
 
-  let input: Record<string, unknown>;
-  let name: string;
-
-  if (jsonFile) {
-    // ── JSON file mode: read full agent input from file ──
-    let raw: string;
-    try {
-      raw = readFileSync(jsonFile, "utf-8");
-    } catch (e) {
-      die(`Cannot read JSON file: ${jsonFile} — ${e instanceof Error ? e.message : e}`);
-    }
-    try {
-      input = JSON.parse(raw!);
-    } catch {
-      die(`Invalid JSON in file: ${jsonFile}`);
-    }
-    name = (input as any).name ?? "";
-  } else {
-    // ── Simple flag mode: --name, --description, --endpoint ──
-    name = flags.name;
-    const description = flags.description ?? flags.desc;
-    const endpoint = flags.endpoint;
-    const image = flags.image;
-
-    if (!name) die("Missing --name (or use --json <file>). Usage:\n  register --name 'My Agent' --description 'What it does' --endpoint 'https://...'\n  register --json agent.json");
-    if (!description) die("Missing --description");
-    if (!endpoint) die("Missing --endpoint");
-
-    input = {
-      name,
-      description,
-      services: [{ name: "api", endpoint }],
-    };
-    if (image) input.image = image;
+  let raw: string;
+  try {
+    raw = readFileSync(jsonFile, "utf-8");
+  } catch (e) {
+    die(`Cannot read JSON file: ${jsonFile} — ${e instanceof Error ? e.message : e}`);
   }
+  let input: Record<string, unknown>;
+  try {
+    input = JSON.parse(raw);
+  } catch {
+    die(`Invalid JSON in file: ${jsonFile}`);
+  }
+
+  const name = (input as any).name ?? "";
 
   const { config, signer } = getSigner();
   const address = await signer.getAddress();
 
   // Set owner from signer if not provided
-  if (!input!.owner) input!.owner = address;
+  if (!input.owner) input.owner = address;
 
   console.log("\u26D3\uFE0F  Zscore ERC-8004 Agent Registration");
   console.log("\u2501".repeat(40));
   console.log(`  Network:  ${getChainLabel(config.chainId)}`);
   console.log(`  Wallet:   ${address}`);
-  if (jsonFile) console.log(`  JSON:     ${jsonFile}`);
+  console.log(`  JSON:     ${jsonFile}`);
   console.log(`  Name:     ${name}`);
 
   // 1. Fee
@@ -192,7 +172,7 @@ async function cmdRegister(flags: Record<string, string>) {
 
   console.log("");
   console.log("Step 1/5: Creating agent URI...");
-  const { id, agentURI, json } = await createAgentURI(config, signer, input! as any);
+  const { id, agentURI, json } = await createAgentURI(config, signer, input as any);
   console.log(`  URI: ${agentURI}`);
 
   console.log("Step 2/5: Minting NFT on-chain...");
@@ -315,8 +295,7 @@ async function main() {
     console.log("Zscore ERC-8004 Identity Registry");
     console.log("\u2501".repeat(40));
     console.log("Commands:");
-    console.log("  register     --json <file>  (full agent JSON — recommended)");
-    console.log("  register     --name <n> --description <d> --endpoint <url> [--image <url>]");
+    console.log("  register     --json <file>  (agent JSON file)");
     console.log("  read         <agentId>");
     console.log("  fee          Show registration fee and status");
     console.log("  set-metadata <agentId> --key <key> --value <value>");

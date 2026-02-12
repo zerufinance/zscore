@@ -19,51 +19,51 @@ npm install
 
 ## Agent Instructions: Registration Flow
 
-When the user wants to **register an agent**, follow this flow. Do not proceed to run the register command until you have collected the required inputs and the user has confirmed.
+When the user wants to **register an agent**, you **must** ask them for all relevant details and build a **full** agent JSON (see "Agent JSON Structure" below). Do **not** default to a minimal JSON (name + description + one service). Ask for each category below; only omit optional fields if the user explicitly skips them.
 
 ### 1. Tell the user about the fee and private key
 
 - **Registration fee:** On Base Mainnet (default): **0.0025 ETH**. On Base Sepolia: **0.001 ETH**. The wallet must also have enough ETH for gas (recommend ~0.003 ETH total on mainnet).
-- **Private key:** Registration requires a wallet. The user must provide `PRIVATE_KEY` (either in environment or when you ask). Explain that you will use it only to run the CLI and that they can set it via env (e.g. in OpenClaw config) or provide it when prompted.
+- **Private key:** Registration requires a wallet. Ask the user to provide `PRIVATE_KEY` (in environment or when you prompt). Explain it is only used to run the CLI and can be set via env (e.g. OpenClaw config) or provided when you ask.
 
-### 2. Collect all required and optional inputs for the agent JSON
+### 2. Ask for full JSON details — do not assume minimal structure
 
-Ask the user for each of the following. For anything they skip, use the suggested default or omit the field as noted.
+Ask the user for each of the following. Use the **full** JSON structure (see "Agent JSON Structure" and the Full JSON example below). Only leave out optional fields if the user says they don't have them or don't want them.
 
-| Input | Required? | What to ask / default |
-|-------|-----------|------------------------|
+| Input | Required? | What to ask |
+|-------|-----------|-------------|
 | **Name** | Yes | "What should the agent name be?" (1–256 chars) |
 | **Description** | Yes | "What description should the agent have?" (max 2048 chars) |
-| **Services** | Yes | At least one service. Ask: "What service(s) does the agent expose?" For each: type (e.g. `web`, `MCP`, `A2A`, `api`) and **endpoint** URL. Minimal: one service with name (e.g. `api` or `web`) and endpoint. |
-| **Image** | No | "Do you have an image URL for the agent?" (HTTPS/IPFS/Arweave). Default: omit or use placeholder. |
-| **x402Support** | No | "Does the agent support x402 payments?" Default: `false`. |
-| **active** | No | "Should the agent be marked active?" Default: `true`. |
-| **supportedTrust** | No | "Any supported trust models?" (e.g. `reputation`, `ERC-8004`). Default: omit. |
-| **owner** | No | Usually auto-set from the signer (PRIVATE_KEY). Only ask if they want a different owner address. |
+| **Image** | No | "Do you have an image URL for the agent (avatar/logo)?" (HTTPS, IPFS, or Arweave). |
+| **Services** | Yes | "What services does the agent expose?" Ask for **each** service type they want: **web** (website URL), **MCP** (server URL, version, mcpTools, etc.), **A2A** (agent card URL, version, a2aSkills), **OASF** (repo URL, version, skills, domains), **agentWallet** (CAIP-10 address), **api** or custom (endpoint URL). For each service, get the required endpoint and any extra fields from the Service types table in "Agent JSON Structure". Do not assume "just one api service" — ask which services they want and collect details for each. |
+| **x402Support** | No | "Does the agent support x402 payments?" (true/false). |
+| **active** | No | "Should the agent be marked as active?" (default true). |
+| **supportedTrust** | No | "Which trust models does the agent support?" (e.g. `reputation`, `ERC-8004`, `crypto-economic`, `tee-attestation`). |
+| **owner** | No | Usually auto-set from PRIVATE_KEY. Only ask if they need a different owner address. |
 
-For **services**, the minimal valid input is one entry, e.g. `{ "name": "api", "endpoint": "https://..." }` or `{ "name": "web", "endpoint": "https://..." }`. If they provide more (MCP, A2A, etc.), collect the extra fields per the table in "Agent JSON Structure" above.
+**Important:** Build the `services` array with the full shape for each type (e.g. for MCP include `version`, `mcpTools`, `capabilities` if applicable; for A2A include `version`, `a2aSkills`; for OASF include `version`, `skills`, `domains`). Reference the "Full JSON" example and the "Service types" table below when constructing the JSON.
 
 ### 3. Create the JSON file
 
-Once you have all inputs:
+Once you have collected the details:
 
-1. Build a JSON object that matches the structure above (see "Minimal JSON" or "Full JSON" examples).
+1. Build a JSON object using the **full** structure (see "Full JSON" example in "Agent JSON Structure" below). Include all fields the user provided; use the proper structure for each service type.
 2. Write it to a file in the current or skill directory, e.g. `agent.json`.
-3. Confirm with the user: "I've created `agent.json` with the details you provided. Ready to register on-chain. Fee is 0.0025 ETH (mainnet) / 0.001 ETH (Sepolia). Proceed?"
+3. Confirm with the user: "I've created `agent.json` with the full details you provided. Registration fee is 0.0025 ETH (mainnet) / 0.001 ETH (Sepolia). Proceed?"
 
 ### 4. Run registration
 
-- Ensure `PRIVATE_KEY` is set (env or user provided). If the user gave the key for this run only, set it in the environment for the command: `PRIVATE_KEY=0x... npx tsx ./scripts/zscore.ts register --json agent.json`
+- Ensure `PRIVATE_KEY` is set (env or user provided). If the user gave the key for this run only: `PRIVATE_KEY=0x... npx tsx ./scripts/zscore.ts register --json agent.json`
 - For Base Sepolia, add: `--chain 84532`
-- Run: `npx tsx ./scripts/zscore.ts register --json agent.json` (and `--chain 84532` if using Base Sepolia)
+- Run: `npx tsx ./scripts/zscore.ts register --json agent.json` (and `--chain 84532` if using Sepolia)
 
-Do **not** run the register command until the user has provided at least name, description, and at least one service endpoint, and (if not already in env) the private key, and you have created the JSON file.
+Do **not** run the register command until the user has provided name, description, and at least one service (with full details for each service they want), and (if not already in env) the private key, and you have created the JSON file using the full structure.
 
 ## Agent JSON Structure (ERC-8004 registration-v1)
 
-When registering an agent, you provide a JSON file describing the agent.
+Registration accepts **only** a JSON file. Use the **full** structure below when collecting user input and building the file. Do not default to a minimal structure.
 
-**Full JSON (MCP + A2A + OASF + x402 payments):**
+**Full JSON (MCP + A2A + OASF + web + agentWallet + x402):**
 
 ```json
 {
@@ -136,7 +136,7 @@ When registering an agent, you provide a JSON file describing the agent.
 
 ### `/zscore register --json <file>`
 
-Register a new agent using a full JSON file (recommended). Creates hosted agent URI, mints NFT on-chain, and updates URI with the real agentId.
+Register a new agent **only** via a JSON file. There is no flag-based registration (no `--name` / `--description` / `--endpoint`). Creates hosted agent URI, mints NFT on-chain, and updates URI with the real agentId.
 
 ```
 /zscore register --json agent.json
@@ -144,25 +144,11 @@ Register a new agent using a full JSON file (recommended). Creates hosted agent 
 ```
 
 **Steps to register (when following Agent Instructions above):**
-1. Collect user input for name, description, services, and any optional fields; mention fee and PRIVATE_KEY.
-2. Create a JSON file (e.g. `agent.json`) with that data.
+1. Ask the user for **full** JSON details (name, description, image, all services with their type-specific fields, x402Support, active, supportedTrust). Do not default to minimal JSON.
+2. Create a JSON file (e.g. `agent.json`) using the full structure (see "Agent JSON Structure" and Full JSON example).
 3. Run: `npx tsx ./scripts/zscore.ts register --json agent.json`
 
 The SDK automatically adds `type`, `registrations` (with `agentId: 0` placeholder), and defaults for missing optional fields. After minting, it updates the document with the real `agentId`.
-
-### `/zscore register --name <name> --description <desc> --endpoint <url>`
-
-Simple registration (single API endpoint only). For richer agents, use `--json` instead.
-
-```
-/zscore register --name "Trading Bot" --description "AI-powered trading agent" --endpoint "https://mybot.com/api"
-/zscore register --name "Data Analyzer" --description "Analyzes datasets" --endpoint "https://analyzer.ai/api" --image "https://example.com/icon.png"
-/zscore register --name "Test Bot" --description "Testing" --endpoint "https://test.com" --chain 84532
-```
-
-Requires `PRIVATE_KEY` env var. Wallet must have fee + gas (e.g. ~0.003 ETH on mainnet).
-
-To run: `npx tsx ./scripts/zscore.ts register --name "..." --description "..." --endpoint "..."`
 
 ### `/zscore read <agentId>`
 
