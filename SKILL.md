@@ -35,7 +35,7 @@ Ask the user for each of the following. Use the **full** JSON structure (see "Ag
 | **Name** | Yes | "What should the agent name be?" (1–256 chars) |
 | **Description** | Yes | "What description should the agent have?" (max 2048 chars) |
 | **Image** | No | "Do you have an image URL for the agent (avatar/logo)?" (HTTPS, IPFS, or Arweave). |
-| **Services** | Yes | "What services does the agent expose?" Ask for **each** service type they want: **web** (website URL), **MCP** (server URL, version, mcpTools, etc.), **A2A** (agent card URL, version, a2aSkills), **OASF** (repo URL, version, skills, domains), **agentWallet** (CAIP-10 address), **api** or custom (endpoint URL). For each service, get the required endpoint and any extra fields from the Service types table in "Agent JSON Structure". Do not assume "just one api service" — ask which services they want and collect details for each. |
+| **Services** | Yes | "What services does the agent expose?" Ask for **each** service type they want: **web** (website URL), **MCP** (server URL, version, mcpTools, etc.), **A2A** (agent card URL, version, a2aSkills), **OASF** (repo URL, version, skills, domains), **api** or custom (endpoint URL). For each service, get the required endpoint and any extra fields from the Service types table in "Agent JSON Structure". Do not assume "just one api service" — ask which services they want and collect details for each. |
 | **x402Support** | No | "Does the agent support x402 payments?" (true/false). |
 | **active** | No | "Should the agent be marked as active?" (default true). |
 | **supportedTrust** | No | "Which trust models does the agent support?" (e.g. `reputation`, `ERC-8004`, `crypto-economic`, `tee-attestation`). |
@@ -63,7 +63,7 @@ Do **not** run the register command until the user has provided name, descriptio
 
 Registration accepts **only** a JSON file. Use the **full** structure below when collecting user input and building the file. Do not default to a minimal structure.
 
-**Full JSON (MCP + A2A + OASF + web + agentWallet + x402):**
+**Full JSON (MCP + A2A + OASF + web + x402):**
 
 ```json
 {
@@ -94,10 +94,6 @@ Registration accepts **only** a JSON file. Use the **full** structure below when
     {
       "name": "web",
       "endpoint": "https://dataanalyst.ai"
-    },
-    {
-      "name": "agentWallet",
-      "endpoint": "eip155:8453:0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb7"
     }
   ],
   "x402Support": true,
@@ -127,9 +123,6 @@ Registration accepts **only** a JSON file. Use the **full** structure below when
 | `"MCP"` | MCP server URL | `version`, `mcpTools[]`, `mcpPrompts[]`, `mcpResources[]`, `capabilities[]` |
 | `"A2A"` | Agent card URL (`/.well-known/agent-card.json`) | `version`, `a2aSkills[]` |
 | `"OASF"` | OASF repo URL | `version`, `skills[]`, `domains[]` |
-| `"agentWallet"` | CAIP-10 address (`eip155:{chainId}:{address}`) | — |
-| `"ENS"` | ENS name (e.g. `myagent.eth`) | — |
-| `"email"` | Email address | — |
 | custom | Any URL | `description` |
 
 ## Commands
