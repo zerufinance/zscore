@@ -58,7 +58,8 @@ For every optional field, you must ask whether the user wants to set it. Only tr
 | **x402Support**    | No        | “Does the agent support x402 payments? (true/false) Or say ‘skip’.”                                                                                                   |
 | **active**         | No        | “Should the agent be marked as active? (true/false) Or say ‘skip’.”                                                                                                   |
 | **supportedTrust** | No        | “Which trust models should be listed? (e.g. reputation, ERC-8004, crypto-economic, tee-attestation) Or say ‘skip’.”                                                   |
-| **owner**          | No        | Usually auto-set from PRIVATE_KEY. Ask only if they need a different owner address: “Do you need to override the owner address? If yes, paste it. If no, say ‘skip’.” |
+
+**Owner:** Do **not** ask the user for an owner address. The owner is always derived from the signer (the wallet that holds `PRIVATE_KEY`). The script sets it automatically; the API requires the document owner to match the signer so that the same wallet can update the document after minting.
 
 #### Private key / funding gate (must be resolved before running registration)
 
@@ -162,7 +163,7 @@ Registration accepts **only** a JSON file. Use the **full** structure below when
 | `x402Support`    | boolean  | No       | omitted unless provided | Supports x402 payment protocol                                                       |
 | `active`         | boolean  | No       | omitted unless provided | Agent is actively accepting requests                                                 |
 | `supportedTrust` | string[] | No       | omitted unless provided | Trust models: `"reputation"`, `"crypto-economic"`, `"tee-attestation"`, `"ERC-8004"` |
-| `owner`          | string   | No       | signer address          | Owner 0x address (auto-set from PRIVATE_KEY)                                         |
+| `owner`          | string   | No       | signer address          | Always set from signer (PRIVATE_KEY). Do not ask the user; the script sets it so the API allows update after mint. |
 
 **Service types:**
 

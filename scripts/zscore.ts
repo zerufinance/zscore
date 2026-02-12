@@ -147,8 +147,8 @@ async function cmdRegister(flags: Record<string, string>) {
   const { config, signer } = getSigner();
   const address = await signer.getAddress();
 
-  // Set owner from signer if not provided
-  if (!input.owner) input.owner = address;
+  // Owner is always the signer (required for API to allow update after mint)
+  input.owner = address;
 
   console.log("\u26D3\uFE0F  Zscore ERC-8004 Agent Registration");
   console.log("\u2501".repeat(40));
