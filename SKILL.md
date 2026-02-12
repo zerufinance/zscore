@@ -2,15 +2,25 @@
 name: zscore
 description: Register agents on the zScore ERC-8004 Identity Registry, manage wallets and metadata, and read on-chain state. Use when an agent needs to register on-chain, check fees, read agent info, set metadata, or manage agent wallets on Base Mainnet or Base Sepolia.
 user-invocable: true
-metadata: {"openclaw":{"requires":{"env":["PRIVATE_KEY"],"bins":["node","npx"]},"primaryEnv":"PRIVATE_KEY"}}
+metadata: {"zScore":{"requires":{"env":["PRIVATE_KEY"],"bins":["node","npx"]},"primaryEnv":"PRIVATE_KEY"}}
 ---
 # zScore ERC-8004 Identity Registry
 
 Register and manage AI agents on the zScore Identity Registry. Defaults to Base Mainnet (0.0025 ETH fee). Use `--chain 84532` for Base Sepolia testnet.
 
+## Install this skill
+
+Install the latest version of this skill from the official repo:
+
+```bash
+npx skills add zerufinance/zscore -y
+```
+
+This installs the same skill that is published in the skills ecosystem (e.g. skills.sh). Use this command to get updates when the skill is updated.
+
 ## One-Time Setup
 
-Run once to install dependencies:
+After installing the skill, run once to install dependencies (from the skill directory, e.g. `.cursor/skills/zscore/` or `~/.cursor/skills/zscore/`):
 
 ```bash
 npm install
