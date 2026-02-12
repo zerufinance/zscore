@@ -216,11 +216,12 @@ async function cmdRegister(flags: Record<string, string>) {
   console.log("Step 5/5: Verifying on-chain...");
   const agent = await getAgent(config, agentId);
 
+  const displayName = (input! as any).name ?? name;
   console.log("");
   console.log("\u2705 Registration complete!");
   console.log("\u2501".repeat(40));
   console.log(`  Agent ID:    ${agentId}`);
-  console.log(`  Name:        ${name}`);
+  console.log(`  Name:        ${displayName}`);
   console.log(`  Owner:       ${agent.owner}`);
   console.log(`  Agent URI:   ${agent.agentURI}`);
   console.log(`  Wallet:      ${agent.agentWallet ?? "(not set)"}`);
