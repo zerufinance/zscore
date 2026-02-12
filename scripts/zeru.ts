@@ -129,6 +129,7 @@ async function cmdRegister(flags: Record<string, string>) {
   const jsonFile = flags.json;
 
   let input: Record<string, unknown>;
+  let name: string;
 
   if (jsonFile) {
     // ── JSON file mode: read full agent input from file ──
@@ -143,9 +144,10 @@ async function cmdRegister(flags: Record<string, string>) {
     } catch {
       die(`Invalid JSON in file: ${jsonFile}`);
     }
+    name = (input as any).name ?? "";
   } else {
     // ── Simple flag mode: --name, --description, --endpoint ──
-    const name = flags.name;
+    name = flags.name;
     const description = flags.description ?? flags.desc;
     const endpoint = flags.endpoint;
     const image = flags.image;
@@ -173,7 +175,7 @@ async function cmdRegister(flags: Record<string, string>) {
   console.log(`  Network:  ${getChainLabel(config.chainId)}`);
   console.log(`  Wallet:   ${address}`);
   if (jsonFile) console.log(`  JSON:     ${jsonFile}`);
-  console.log(`  Name:     ${(input! as any).name}`);
+  console.log(`  Name:     ${name}`);
 
   // 1. Fee
   const fee = await getRegistrationFee(config);
@@ -216,12 +218,11 @@ async function cmdRegister(flags: Record<string, string>) {
   console.log("Step 5/5: Verifying on-chain...");
   const agent = await getAgent(config, agentId);
 
-  const displayName = (input! as any).name ?? name;
   console.log("");
   console.log("\u2705 Registration complete!");
   console.log("\u2501".repeat(40));
   console.log(`  Agent ID:    ${agentId}`);
-  console.log(`  Name:        ${displayName}`);
+  console.log(`  Name:        ${name}`);
   console.log(`  Owner:       ${agent.owner}`);
   console.log(`  Agent URI:   ${agent.agentURI}`);
   console.log(`  Wallet:      ${agent.agentWallet ?? "(not set)"}`);
