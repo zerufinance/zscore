@@ -17,21 +17,51 @@ Run once to install dependencies:
 npm install
 ```
 
+## Agent Instructions: Registration Flow
+
+When the user wants to **register an agent**, follow this flow. Do not proceed to run the register command until you have collected the required inputs and the user has confirmed.
+
+### 1. Tell the user about the fee and private key
+
+- **Registration fee:** On Base Mainnet (default): **0.0025 ETH**. On Base Sepolia: **0.001 ETH**. The wallet must also have enough ETH for gas (recommend ~0.003 ETH total on mainnet).
+- **Private key:** Registration requires a wallet. The user must provide `PRIVATE_KEY` (either in environment or when you ask). Explain that you will use it only to run the CLI and that they can set it via env (e.g. in OpenClaw config) or provide it when prompted.
+
+### 2. Collect all required and optional inputs for the agent JSON
+
+Ask the user for each of the following. For anything they skip, use the suggested default or omit the field as noted.
+
+| Input | Required? | What to ask / default |
+|-------|-----------|------------------------|
+| **Name** | Yes | "What should the agent name be?" (1–256 chars) |
+| **Description** | Yes | "What description should the agent have?" (max 2048 chars) |
+| **Services** | Yes | At least one service. Ask: "What service(s) does the agent expose?" For each: type (e.g. `web`, `MCP`, `A2A`, `api`) and **endpoint** URL. Minimal: one service with name (e.g. `api` or `web`) and endpoint. |
+| **Image** | No | "Do you have an image URL for the agent?" (HTTPS/IPFS/Arweave). Default: omit or use placeholder. |
+| **x402Support** | No | "Does the agent support x402 payments?" Default: `false`. |
+| **active** | No | "Should the agent be marked active?" Default: `true`. |
+| **supportedTrust** | No | "Any supported trust models?" (e.g. `reputation`, `ERC-8004`). Default: omit. |
+| **owner** | No | Usually auto-set from the signer (PRIVATE_KEY). Only ask if they want a different owner address. |
+
+For **services**, the minimal valid input is one entry, e.g. `{ "name": "api", "endpoint": "https://..." }` or `{ "name": "web", "endpoint": "https://..." }`. If they provide more (MCP, A2A, etc.), collect the extra fields per the table in "Agent JSON Structure" above.
+
+### 3. Create the JSON file
+
+Once you have all inputs:
+
+1. Build a JSON object that matches the structure above (see "Minimal JSON" or "Full JSON" examples).
+2. Write it to a file in the current or skill directory, e.g. `agent.json`.
+3. Confirm with the user: "I've created `agent.json` with the details you provided. Ready to register on-chain. Fee is 0.0025 ETH (mainnet) / 0.001 ETH (Sepolia). Proceed?"
+
+### 4. Run registration
+
+- Ensure `PRIVATE_KEY` is set (env or user provided). If the user gave the key for this run only, set it in the environment for the command: `PRIVATE_KEY=0x... npx tsx ./scripts/zscore.ts register --json agent.json`
+- For Base Sepolia, add: `--chain 84532`
+- Run: `npx tsx ./scripts/zscore.ts register --json agent.json` (and `--chain 84532` if using Base Sepolia)
+
+Do **not** run the register command until the user has provided at least name, description, and at least one service endpoint, and (if not already in env) the private key, and you have created the JSON file.
+
 ## Agent JSON Structure (ERC-8004 registration-v1)
 
-When registering an agent, you provide a JSON file describing the agent. The SDK auto-fills `type`, `registrations`, and defaults for `x402Support`/`active`/`image` if omitted.
-
-**Minimal JSON (just name + description + one service):**
-
-```json
-{
-  "name": "My AI Agent",
-  "description": "A helpful AI agent that does X",
-  "services": [
-    { "name": "web", "endpoint": "https://myagent.example.com" }
-  ]
-}
-```
+When registering an agent, you provide a JSON file describing the agent.
 
 **Full JSON (MCP + A2A + OASF + x402 payments):**
 
@@ -101,48 +131,6 @@ When registering an agent, you provide a JSON file describing the agent. The SDK
 | `"ENS"` | ENS name (e.g. `myagent.eth`) | — |
 | `"email"` | Email address | — |
 | custom | Any URL | `description` |
-
-## Agent Instructions: Registration Flow
-
-When the user wants to **register an agent**, follow this flow. Do not proceed to run the register command until you have collected the required inputs and the user has confirmed.
-
-### 1. Tell the user about the fee and private key
-
-- **Registration fee:** On Base Mainnet (default): **0.0025 ETH**. On Base Sepolia: **0.001 ETH**. The wallet must also have enough ETH for gas (recommend ~0.003 ETH total on mainnet).
-- **Private key:** Registration requires a wallet. The user must provide `PRIVATE_KEY` (either in environment or when you ask). Explain that you will use it only to run the CLI and that they can set it via env (e.g. in OpenClaw config) or provide it when prompted.
-
-### 2. Collect all required and optional inputs for the agent JSON
-
-Ask the user for each of the following. For anything they skip, use the suggested default or omit the field as noted.
-
-| Input | Required? | What to ask / default |
-|-------|-----------|------------------------|
-| **Name** | Yes | "What should the agent name be?" (1–256 chars) |
-| **Description** | Yes | "What description should the agent have?" (max 2048 chars) |
-| **Services** | Yes | At least one service. Ask: "What service(s) does the agent expose?" For each: type (e.g. `web`, `MCP`, `A2A`, `api`) and **endpoint** URL. Minimal: one service with name (e.g. `api` or `web`) and endpoint. |
-| **Image** | No | "Do you have an image URL for the agent?" (HTTPS/IPFS/Arweave). Default: omit or use placeholder. |
-| **x402Support** | No | "Does the agent support x402 payments?" Default: `false`. |
-| **active** | No | "Should the agent be marked active?" Default: `true`. |
-| **supportedTrust** | No | "Any supported trust models?" (e.g. `reputation`, `ERC-8004`). Default: omit. |
-| **owner** | No | Usually auto-set from the signer (PRIVATE_KEY). Only ask if they want a different owner address. |
-
-For **services**, the minimal valid input is one entry, e.g. `{ "name": "api", "endpoint": "https://..." }` or `{ "name": "web", "endpoint": "https://..." }`. If they provide more (MCP, A2A, etc.), collect the extra fields per the table in "Agent JSON Structure" above.
-
-### 3. Create the JSON file
-
-Once you have all inputs:
-
-1. Build a JSON object that matches the structure above (see "Minimal JSON" or "Full JSON" examples).
-2. Write it to a file in the current or skill directory, e.g. `agent.json`.
-3. Confirm with the user: "I've created `agent.json` with the details you provided. Ready to register on-chain. Fee is 0.0025 ETH (mainnet) / 0.001 ETH (Sepolia). Proceed?"
-
-### 4. Run registration
-
-- Ensure `PRIVATE_KEY` is set (env or user provided). If the user gave the key for this run only, set it in the environment for the command: `PRIVATE_KEY=0x... npx tsx ./scripts/zscore.ts register --json agent.json`
-- For Base Sepolia, add: `--chain 84532`
-- Run: `npx tsx ./scripts/zscore.ts register --json agent.json` (and `--chain 84532` if using Base Sepolia)
-
-Do **not** run the register command until the user has provided at least name, description, and at least one service endpoint, and (if not already in env) the private key, and you have created the JSON file.
 
 ## Commands
 
