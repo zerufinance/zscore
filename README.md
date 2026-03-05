@@ -38,3 +38,6 @@ See [SKILL.md](./SKILL.md) for full usage and ERC-8004 agent JSON structure.
 ## License
 
 Same as the upstream project.
+
+## Deployments
+BNB - Soon
